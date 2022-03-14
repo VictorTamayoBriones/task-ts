@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import 'bootswatch/dist/flatly/bootstrap.min.css';
 
 type FormElementEvent = React.FormEvent<HTMLFormElement>;
@@ -12,6 +12,8 @@ function App(): JSX.Element {
   const[newTask, setNewTask]=useState<string>('');
   const[tasks, setTasks]=useState<ITask[]>([]);
 
+  const inputRef =useRef<HTMLInputElement>(null);
+
   const addTask = (name: string): void =>{
     const newTasks: ITask[] = [...tasks, {name, done: false}];
     setTasks(newTasks);
@@ -20,7 +22,7 @@ function App(): JSX.Element {
   const handleSubmit=(e: FormElementEvent): void =>{
     e.preventDefault();
     addTask(newTask);
-    console.log(tasks);
+    inputRef.current?.focus();
     setNewTask('');
   }
 
@@ -31,7 +33,9 @@ function App(): JSX.Element {
   }
 
   const removeTask=(i:number): void =>{
-    console.log(i)
+    const newTasks = [...tasks];
+    newTasks.splice(i, 1);
+    setTasks(newTasks);
   }
 
   return (
@@ -41,7 +45,7 @@ function App(): JSX.Element {
           <div className="card">
             <div className="card-body">
               <form onSubmit={handleSubmit} >
-                <input type="text" value={newTask} onChange={e => setNewTask(e.target.value)} className="form-control" autoFocus />
+                <input type="text" value={newTask} onChange={e => setNewTask(e.target.value)} className="form-control" ref={inputRef}  autoFocus />
                 <button className='btn btn-outline-primary btn-block btn-lg mt-2' >Save Task</button>
               </form>
             </div>
